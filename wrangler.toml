@@ -1,0 +1,137 @@
+# =============================================================================
+# Charger Robotics 3786 Slack Bot - Cloudflare Workers Configuration
+# =============================================================================
+# 
+# SETUP INSTRUCTIONS:
+# 1. Run `npm run setup:cloudflare` to create KV namespaces and D1 databases
+# 2. Update the IDs below with the outputs from step 1
+# 3. Run `npm run setup:secrets` to configure API keys
+# 4. Run `npm run db:migrate:local` to initialize the database schema
+#
+# See docs/SETUP.md for complete setup guide
+# =============================================================================
+
+name = "charger-bot"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# -----------------------------------------------------------------------------
+# Development Environment (default)
+# -----------------------------------------------------------------------------
+
+# KV Namespace for sessions and cache
+# TODO: Replace with your KV namespace ID after running setup:cloudflare
+[[kv_namespaces]]
+binding = "SESSIONS"
+id = "YOUR_KV_NAMESPACE_ID_HERE"
+preview_id = "YOUR_KV_PREVIEW_ID_HERE"
+
+# D1 Database for gamification data
+# TODO: Replace with your D1 database ID after running setup:cloudflare  
+[[d1_databases]]
+binding = "DB"
+database_name = "charger-bot-dev"
+database_id = "YOUR_D1_DATABASE_ID_HERE"
+
+# Queue for async processing
+# TODO: Replace with your Queue ID after running setup:cloudflare
+[[queues.producers]]
+binding = "TASKS_QUEUE"
+queue = "charger-bot-tasks-dev"
+
+[[queues.consumers]]
+queue = "charger-bot-tasks-dev"
+max_batch_size = 10
+max_batch_timeout = 30
+
+# -----------------------------------------------------------------------------
+# Staging Environment
+# -----------------------------------------------------------------------------
+
+[env.staging]
+name = "charger-bot-staging"
+
+[[env.staging.kv_namespaces]]
+binding = "SESSIONS"
+id = "YOUR_STAGING_KV_ID_HERE"
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "charger-bot-staging"
+database_id = "YOUR_STAGING_D1_ID_HERE"
+
+[[env.staging.queues.producers]]
+binding = "TASKS_QUEUE"
+queue = "charger-bot-tasks-staging"
+
+[[env.staging.queues.consumers]]
+queue = "charger-bot-tasks-staging"
+max_batch_size = 10
+max_batch_timeout = 30
+
+# -----------------------------------------------------------------------------
+# Production Environment
+# -----------------------------------------------------------------------------
+
+[env.production]
+name = "charger-bot-production"
+
+[[env.production.kv_namespaces]]
+binding = "SESSIONS"
+id = "YOUR_PRODUCTION_KV_ID_HERE"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "charger-bot-production"
+database_id = "YOUR_PRODUCTION_D1_ID_HERE"
+
+[[env.production.queues.producers]]
+binding = "TASKS_QUEUE"
+queue = "charger-bot-tasks-production"
+
+[[env.production.queues.consumers]]
+queue = "charger-bot-tasks-production"
+max_batch_size = 10
+max_batch_timeout = 30
+
+# Custom domain (optional - configure after initial deployment)
+# routes = [
+#   { pattern = "bot.chargerrobotics.org", custom_domain = true }
+# ]
+
+# -----------------------------------------------------------------------------
+# Environment Variables (non-secret, can be in version control)
+# -----------------------------------------------------------------------------
+
+[vars]
+ENVIRONMENT = "development"
+LOG_LEVEL = "debug"
+BOT_NAME = "ChargerBot"
+TEAM_NUMBER = "3786"
+GITLAB_URL = "https://gitlab.com"
+
+[env.staging.vars]
+ENVIRONMENT = "staging"
+LOG_LEVEL = "info"
+GITLAB_URL = "https://gitlab.com"
+
+[env.production.vars]
+ENVIRONMENT = "production"
+LOG_LEVEL = "warn"
+GITLAB_URL = "https://gitlab.com"
+
+# -----------------------------------------------------------------------------
+# Secrets (set via `wrangler secret put` or `npm run setup:secrets`)
+# -----------------------------------------------------------------------------
+# 
+# Required secrets (DO NOT put values here - use wrangler secret put):
+#   - SLACK_SIGNING_SECRET    : Slack app signing secret
+#   - SLACK_BOT_TOKEN         : Slack bot OAuth token (xoxb-...)
+#   - ATLASSIAN_CLIENT_ID     : Atlassian OAuth app client ID
+#   - ATLASSIAN_CLIENT_SECRET : Atlassian OAuth app client secret
+#   - GITLAB_ACCESS_TOKEN     : GitLab group/project access token
+#   - ENCRYPTION_KEY          : 32-byte hex key for encrypting tokens at rest
+#
+# See docs/SETUP.md Step 3 for how to obtain each secret
+# -----------------------------------------------------------------------------

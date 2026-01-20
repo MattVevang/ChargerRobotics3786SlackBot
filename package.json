@@ -1,0 +1,51 @@
+{
+  "name": "charger-robotics-slack-bot",
+  "version": "0.1.0",
+  "description": "Gamified Slack bot for FRC Team 3786 - integrates Jira, Confluence, and GitLab",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "deploy:production": "wrangler deploy --env production",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "typecheck": "tsc --noEmit",
+    "db:migrate:local": "wrangler d1 execute charger-bot-dev --local --file=./migrations/001_initial_schema.sql",
+    "db:migrate:staging": "wrangler d1 execute charger-bot-staging --file=./migrations/001_initial_schema.sql",
+    "db:migrate:production": "wrangler d1 execute charger-bot-production --file=./migrations/001_initial_schema.sql",
+    "setup:check": "node scripts/setup-check.js",
+    "setup:secrets": "node scripts/setup-secrets.js",
+    "setup:cloudflare": "node scripts/setup-cloudflare.js",
+    "setup:full": "npm run setup:check && npm run setup:cloudflare && npm run setup:secrets && npm run db:migrate:local"
+  },
+  "keywords": [
+    "slack-bot",
+    "frc",
+    "robotics",
+    "jira",
+    "confluence",
+    "gitlab",
+    "cloudflare-workers",
+    "gamification"
+  ],
+  "author": "Charger Robotics Team 3786",
+  "license": "MIT",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240117.0",
+    "@types/node": "^20.11.0",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.0",
+    "wrangler": "^3.24.0"
+  },
+  "dependencies": {
+    "hono": "^3.12.0",
+    "itty-router": "^4.0.27"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

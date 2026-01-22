@@ -1,8 +1,26 @@
 # Succession Planning: Charger Robotics 3786 Bot
 
-**Version**: 1.0  
-**Date**: January 2025  
+**Version**: 1.1  
+**Date**: January 2026  
 **Purpose**: Ensure the bot survives mentor transitions and continues serving the team
+
+---
+
+## 0. POC vs Production: When This Document Applies
+
+> ⚠️ **Important**: This document describes the **ideal end-state** for team ownership. If you're running in **POC Mode** (testing with personal accounts), you don't need to implement all of this yet.
+
+| Phase | Account Strategy | This Document |
+|-------|-----------------|---------------|
+| **🧪 POC Mode** | Personal accounts | Reference only - implement later |
+| **🏭 Production Mode** | Team-owned accounts | Full implementation required |
+
+**When to apply this document:**
+- ✅ Team has validated and adopted the bot
+- ✅ Bot is considered "team infrastructure"
+- ✅ Multiple people need ongoing access
+
+**POC-to-Production Migration**: See [Section 8](#8-poc-to-production-migration-checklist) for the migration checklist.
 
 ---
 
@@ -19,9 +37,18 @@ FRC teams are volunteer-run organizations with natural turnover:
 
 ## 2. Account Ownership Strategy
 
-### 2.1 The Golden Rule
+### 2.1 The Golden Rule (For Production)
 
 > **Never tie critical infrastructure to a personal account.**
+
+⚠️ **Note**: This rule applies to **production deployments**. For POC/testing, personal accounts are acceptable and even preferred to reduce team burden.
+
+| Phase | Acceptable | Recommended |
+|-------|------------|-------------|
+| **🧪 POC** | `john@gmail.com` (your account) | Test quickly, discard if unwanted |
+| **🏭 Production** | ❌ Personal accounts | `tech@chargerrobotics.org` (team-owned) |
+
+**Production Best Practices:**
 
 | ❌ Bad Practice | ✅ Good Practice |
 |-----------------|------------------|
@@ -345,9 +372,57 @@ Before each FRC season:
 
 ---
 
-## 9. Summary Checklist
+## 9. POC-to-Production Migration Checklist
 
-**Before Launch**:
+When the team decides to adopt the bot, migrate from personal accounts to team ownership:
+
+### Phase 1: Create Team Accounts
+
+- [ ] Create team email alias (e.g., `tech@chargerrobotics.org`)
+- [ ] Add 2+ mentors to email alias
+- [ ] Create Cloudflare account with team email
+- [ ] Create Atlassian Developer account with team email
+- [ ] Set up team password manager
+
+### Phase 2: Recreate Resources Under Team Account
+
+- [ ] In new Cloudflare account:
+  - [ ] Create KV namespace
+  - [ ] Create D1 database
+  - [ ] Create Queue
+- [ ] In new Atlassian Developer account:
+  - [ ] Create new OAuth app with same scopes
+  - [ ] Update callback URL
+- [ ] Create GitLab Group Access Token (if applicable)
+
+### Phase 3: Migrate Data & Deploy
+
+- [ ] Export data from POC D1 database (if needed)
+- [ ] Import data to production D1 database
+- [ ] Update `wrangler.toml` with new resource IDs
+- [ ] Set secrets in new Cloudflare account
+- [ ] Deploy to new account
+
+### Phase 4: Update Integrations
+
+- [ ] Update Slack app URLs to new Worker domain
+- [ ] Users will need to re-authorize Atlassian (new OAuth app)
+- [ ] Test all functionality
+
+### Phase 5: Cleanup
+
+- [ ] Delete old Worker from personal Cloudflare
+- [ ] Document new accounts in password manager
+- [ ] Schedule credential rotation reminders
+
+> 💡 **Tip**: The migration is essentially "do the setup guide again" but with team accounts. The bot code doesn't change.
+
+---
+
+## 10. Summary Checklist
+
+**Before Launch (Production)**:
+
 - [ ] Team email alias created and forwarding to 2+ mentors
 - [ ] All service accounts use team email
 - [ ] 2+ admins on every service
@@ -357,6 +432,7 @@ Before each FRC season:
 - [ ] Annual review process calendared
 
 **This document should be reviewed and updated whenever**:
+
 - A mentor joins or leaves
 - A new service is added
 - An account recovery is needed

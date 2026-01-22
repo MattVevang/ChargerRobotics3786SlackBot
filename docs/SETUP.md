@@ -4,6 +4,37 @@ This guide walks you through setting up the Charger Robotics 3786 Slack Bot from
 
 ---
 
+## 🧪 POC Mode vs Production Mode
+
+This bot supports two deployment modes:
+
+| Mode | Use Case | Account Strategy |
+|------|----------|------------------|
+| **🧪 POC Mode** | Testing if the team wants this | Personal accounts (your own Cloudflare, etc.) |
+| **🏭 Production Mode** | Team has validated and adopted | Team-owned accounts (see [Succession Planning](succession-planning.md)) |
+
+### POC Mode (Recommended for First-Time Setup)
+
+If you're just exploring whether the team would even use this bot:
+
+1. **Use your personal accounts** - Cloudflare, Atlassian Developer, etc.
+2. **Keep costs at $0** - Stay within free tiers
+3. **Easy to discard** - If team doesn't want it, just delete the Worker
+4. **Easy to migrate later** - If team adopts it, transfer to team accounts
+
+> 💡 **Tip**: Start in POC Mode. The succession planning docs describe how to migrate to team ownership *after* you've validated the concept.
+
+### When to Switch to Production Mode
+
+Migrate to team-owned accounts when:
+- ✅ Team has tested and wants to keep the bot
+- ✅ Multiple people need admin access
+- ✅ Bot becomes "critical infrastructure"
+
+See [Succession Planning](succession-planning.md) for the migration checklist.
+
+---
+
 ## 📋 Setup Overview
 
 ```
@@ -120,9 +151,12 @@ npm run setup:check
 ### 2.1 Create Account
 
 1. Go to: **https://dash.cloudflare.com/sign-up**
-2. Sign up with your **team email** (e.g., `tech@chargerrobotics.org`)
-   - ⚠️ Do NOT use a personal email for team resources
+2. Sign up with your email:
+   - **🧪 POC Mode**: Your personal email is fine (easy to test & discard)
+   - **🏭 Production Mode**: Use team email (e.g., `tech@chargerrobotics.org`)
 3. Verify your email
+
+> 💡 **POC Tip**: Using your personal Cloudflare account keeps the team burden at zero. You can transfer ownership later if the team adopts the bot.
 
 ### 2.2 Authenticate Wrangler CLI
 
@@ -229,9 +263,11 @@ npx wrangler whoami
 ### 4.1 Access Developer Console
 
 1. Go to: **https://developer.atlassian.com/console/myapps/**
-2. Sign in with your **team Atlassian account**
-   - ⚠️ Use team email, not personal!
-   - If no team account exists, create one first
+2. Sign in with your Atlassian account:
+   - **🧪 POC Mode**: Your personal Atlassian account is fine
+   - **🏭 Production Mode**: Use team Atlassian account
+
+> 💡 **POC Tip**: The OAuth app is tied to the *developer account*, not to your Jira/Confluence site. Your personal dev account can still authorize against the team's Jira.
 
 ### 4.2 Create OAuth 2.0 App
 
